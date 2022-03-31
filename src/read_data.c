@@ -3,7 +3,8 @@
  * @ingroup MAT
  */
 /*
- * Copyright (c) 2005-2021, Christopher C. Hulbert
+ * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2005-2014, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,7 +53,7 @@
             }                                                         \
         } else {                                                      \
             size_t j;                                                 \
-            int err_ = 0;                                              \
+            int err_ = 0;                                             \
             readcount = 0;                                            \
             for ( i = 0; i < len - block_size; i += block_size ) {    \
                 j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -62,11 +63,11 @@
                         data[i + j] = (T)v[j];                        \
                     }                                                 \
                 } else {                                              \
-                    err_ = 1;                                          \
+                    err_ = 1;                                         \
                     break;                                            \
                 }                                                     \
             }                                                         \
-            if ( 0 == err_ && len > i ) {                              \
+            if ( 0 == err_ && len > i ) {                             \
                 j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                 readcount += j;                                       \
                 if ( j == len - i ) {                                 \
@@ -91,7 +92,7 @@
                 }                                                         \
             } else {                                                      \
                 size_t j;                                                 \
-                int err_ = 0;                                              \
+                int err_ = 0;                                             \
                 readcount = 0;                                            \
                 for ( i = 0; i < len - block_size; i += block_size ) {    \
                     j = fread(v, data_size, block_size, (FILE *)mat->fp); \
@@ -101,11 +102,11 @@
                             data[i + j] = (T)SwapFunc(&v[j]);             \
                         }                                                 \
                     } else {                                              \
-                        err_ = 1;                                          \
+                        err_ = 1;                                         \
                         break;                                            \
                     }                                                     \
                 }                                                         \
-                if ( 0 == err_ && len > i ) {                              \
+                if ( 0 == err_ && len > i ) {                             \
                     j = fread(v, data_size, len - i, (FILE *)mat->fp);    \
                     readcount += j;                                       \
                     if ( j == len - i ) {                                 \

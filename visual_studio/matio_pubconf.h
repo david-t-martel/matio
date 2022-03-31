@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2010-2021, Christopher C. Hulbert
+ * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2010-2014, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,13 +35,13 @@
 #define MATIO_MINOR_VERSION 5
 
 /* Matio release level number */
-#define MATIO_RELEASE_LEVEL 21
+#define MATIO_RELEASE_LEVEL 22
 
 /* Matio version number */
-#define MATIO_VERSION 1521
+#define MATIO_VERSION 1522
 
 /* Matio version string */
-#define MATIO_VERSION_STR "1.5.21"
+#define MATIO_VERSION_STR "1.5.22"
 
 /* Default file format */
 #define MAT_FT_DEFAULT MAT_FT_MAT5

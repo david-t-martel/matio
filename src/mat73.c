@@ -3,7 +3,8 @@
  * @ingroup MAT
  */
 /*
- * Copyright (c) 2005-2021, Christopher C. Hulbert
+ * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2005-2014, Christopher C. Hulbert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1233,9 +1234,8 @@ Mat_H5ReadNextReferenceData(hid_t ref_id, matvar_t *matvar, mat_t *mat)
         case H5I_DATASET: {
             hid_t data_type_id, dset_id;
             if ( MAT_C_CHAR == matvar->class_type ) {
-                matvar->data_type = MAT_T_UINT8;
-                matvar->data_size = (int)Mat_SizeOf(MAT_T_UINT8);
-                data_type_id = DataType2H5T(MAT_T_UINT8);
+                matvar->data_size = (int)Mat_SizeOf(matvar->data_type);
+                data_type_id = DataType2H5T(matvar->data_type);
             } else if ( MAT_C_STRUCT == matvar->class_type ) {
                 /* Empty structure array */
                 break;
@@ -1392,11 +1392,11 @@ Mat_VarWriteRef(hid_t id, matvar_t *matvar, enum matio_compression compression, 
     if ( herr < 0 ) {
         err = MATIO_E_BAD_ARGUMENT;
     } else {
-        sprintf(obj_name, "%llu", group_info.nlinks);
+        sprintf(obj_name, "%llu", (unsigned long long)group_info.nlinks);
         if ( NULL != matvar )
             matvar->compression = compression;
         err = Mat_VarWriteNext73(*refs_id, matvar, obj_name, refs_id);
-        sprintf(obj_name, "/#refs#/%llu", group_info.nlinks);
+        sprintf(obj_name, "/#refs#/%llu", (unsigned long long)group_info.nlinks);
         H5Rcreate(ref, id, obj_name, H5R_OBJECT, -1);
     }
     return err;
@@ -2554,7 +2554,7 @@ Mat_Create73(const char *matname, const char *hdr_str)
         return NULL;
     }
 
-    (void)fseek(fp, 0, SEEK_SET);
+    (void)fseeko(fp, 0, SEEK_SET);
 
     mat = (mat_t *)malloc(sizeof(*mat));
     if ( mat == NULL ) {
@@ -2820,7 +2820,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "ir", H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
-                    size_t nbytes;
+                    size_t nbytes = 0;
                     sparse_data->nir = (mat_uint32_t)dims[0];
                     free(dims);
                     err = Mul(&nbytes, sparse_data->nir, sizeof(mat_uint32_t));
@@ -2847,6 +2847,8 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 H5Dclose(sparse_dset_id);
                 if ( err ) {
                     H5Gclose(dset_id);
+                    if ( sparse_data->ir != NULL )
+                        free(sparse_data->ir);
                     free(sparse_data);
                     return err;
                 }
@@ -2860,7 +2862,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "jc", H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
-                    size_t nbytes;
+                    size_t nbytes = 0;
                     sparse_data->njc = (mat_uint32_t)dims[0];
                     free(dims);
                     err = Mul(&nbytes, sparse_data->njc, sizeof(mat_uint32_t));
@@ -2887,6 +2889,10 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 H5Dclose(sparse_dset_id);
                 if ( err ) {
                     H5Gclose(dset_id);
+                    if ( sparse_data->jc != NULL )
+                        free(sparse_data->jc);
+                    if ( sparse_data->ir != NULL )
+                        free(sparse_data->ir);
                     free(sparse_data);
                     return err;
                 }
@@ -2900,7 +2906,7 @@ Mat_VarRead73(mat_t *mat, matvar_t *matvar)
                 sparse_dset_id = H5Dopen(dset_id, "data", H5P_DEFAULT);
                 dims = Mat_H5ReadDims(sparse_dset_id, &nelems, &rank);
                 if ( NULL != dims ) {
-                    size_t ndata_bytes;
+                    size_t ndata_bytes = 0;
                     sparse_data->nzmax = (mat_uint32_t)dims[0];
                     sparse_data->ndata = (mat_uint32_t)dims[0];
                     free(dims);

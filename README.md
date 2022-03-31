@@ -2,7 +2,7 @@
 MATLAB MAT file I/O library
 
 ## Status
-[![Build Status](https://travis-ci.org/tbeu/matio.svg?branch=master)](https://travis-ci.org/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![BCH Compliance](https://bettercodehub.com/edge/badge/tbeu/matio?branch=master)](https://bettercodehub.com/) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio) [![Open Hub](https://img.shields.io/badge/Open-Hub-blue.svg)](https://www.openhub.net/p/matio)
+[![Build Status](https://app.travis-ci.com/tbeu/matio.svg?branch=master)](https://app.travis-ci.com/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![FreeBSD Build Status](https://img.shields.io/cirrus/github/tbeu/matio?label=freebsd&logo=cirrus%20ci)](https://cirrus-ci.com/github/tbeu/matio) [![BCH Compliance](https://bettercodehub.com/edge/badge/tbeu/matio?branch=master)](https://bettercodehub.com/) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio) [![Open Hub](https://img.shields.io/badge/Open-Hub-blue.svg)](https://www.openhub.net/p/matio)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
@@ -33,6 +33,7 @@ You can contact the maintainer through email at t-beu@users.sourceforge.net.
 ### 1.2 Acknowledgements
 The following people/organizations have helped in the development of matio through patches, bug reports, and/or testing:
 
+* [Don Zimmer](https://github.com/dpzimmer)
 * [Greg Sjaardema](https://github.com/gsjaardema)
 * [Jacco van Beek](https://sourceforge.net/u/jabe)
 * [John Filo](https://github.com/jfilo)
@@ -69,6 +70,7 @@ Support for MAT file version 7.3 requires the HDF5 library. This library can be 
 * Building matio with HDF5 1.8.x requires configuration of HDF5 with default API version 1.8 (i.e. `--with-default-api-version=v18`).
 * Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 * Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
+* Building matio with HDF5 1.13.x requires configuration of HDF5 with either default API version 1.14 (i.e. `--with-default-api-version=v114`), or with deprecated API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 
 For Windows, the pre-compiled binaries can be used which also include a DLL of zlib to satisfy the zlib dependency.
 

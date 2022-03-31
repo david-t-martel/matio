@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (c) 2005-2021, Christopher C. Hulbert
+## Copyright (c) 2015-2022, The matio contributors
+## Copyright (c) 2005-2014, Christopher C. Hulbert
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -27,7 +28,7 @@
 VPATH = @srcdir@
 
 LT_CURRENT=11
-LT_REVISION=3
+LT_REVISION=4
 LT_AGE=0
 
 AM_CFLAGS  = -I. $(HDF5_CFLAGS) $(ZLIB_CFLAGS) $(LT_CFLAGS)
