@@ -4,7 +4,7 @@ set -x #echo on
 
 if [[ "$ENABLE_MAT73" == "yes" ]]; then
     if [[ "${USE_CMAKE:-no}" == "no" ]]; then
-        git clone --depth 1 https://github.com/madler/zlib
+        git clone --branch v1.2.13 --depth 1 https://github.com/madler/zlib
         pushd zlib
         ./configure --prefix="$TRAVIS_BUILD_DIR"/zlib --eprefix="$TRAVIS_BUILD_DIR"/zlib
         make install
@@ -15,14 +15,14 @@ if [[ "$ENABLE_MAT73" == "yes" ]]; then
         tar -xzf hdf5-$HDF5_VERSION.tar.gz
         pushd hdf5-$HDF5_VERSION
 
-        if [[ "$HDF5_VERSION" == "1.13.1" ]]; then
+        if [[ "$HDF5_VERSION" == "1.13.2" ]]; then
             ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tests --disable-tools --with-pic --with-default-api-version=v114 --disable-dependency-tracking --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
         fi
-        if [[ "$HDF5_VERSION" == "1.12.1" ]]; then
+        if [[ "$HDF5_VERSION" == "1.12.2" ]]; then
             ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tests --disable-tools --with-pic --with-default-api-version=v112 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
         fi
-        if [[ "$HDF5_VERSION" == "1.10.8" ]]; then
-            ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --with-pic --with-default-api-version=v110 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
+        if [[ "$HDF5_VERSION" == "1.10.9" ]]; then
+            ./configure --quiet --enable-shared --enable-build-mode=debug --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-memory-alloc-sanity-check --disable-instrument --disable-parallel --disable-trace --disable-internal-debug --enable-optimization=debug --disable-asserts --disable-tools --with-pic --with-default-api-version=v110 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"
         fi
         if [[ "$HDF5_VERSION" == "1.8.22" ]]; then
             ./configure --quiet --enable-shared --disable-production --enable-debug=all --with-pic --disable-deprecated-symbols --disable-hl --disable-strict-format-checks --disable-clear-file-buffers --disable-instrument --disable-parallel --disable-trace --with-default-api-version=v18 --with-zlib="$TRAVIS_BUILD_DIR"/zlib CFLAGS="-w"

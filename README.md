@@ -2,7 +2,7 @@
 MATLAB MAT file I/O library
 
 ## Status
-[![Build Status](https://app.travis-ci.com/tbeu/matio.svg?branch=master)](https://app.travis-ci.com/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![FreeBSD Build Status](https://img.shields.io/cirrus/github/tbeu/matio?label=freebsd&logo=cirrus%20ci)](https://cirrus-ci.com/github/tbeu/matio) [![BCH Compliance](https://bettercodehub.com/edge/badge/tbeu/matio?branch=master)](https://bettercodehub.com/) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio) [![Open Hub](https://img.shields.io/badge/Open-Hub-blue.svg)](https://www.openhub.net/p/matio)
+[![Build Status](https://app.travis-ci.com/tbeu/matio.svg?branch=master)](https://app.travis-ci.com/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![FreeBSD Build Status](https://img.shields.io/cirrus/github/tbeu/matio?label=freebsd&logo=cirrus%20ci)](https://cirrus-ci.com/github/tbeu/matio) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio) [![Open Hub](https://img.shields.io/badge/Open-Hub-blue.svg)](https://www.openhub.net/p/matio)
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
@@ -37,6 +37,7 @@ The following people/organizations have helped in the development of matio throu
 * [Greg Sjaardema](https://github.com/gsjaardema)
 * [Jacco van Beek](https://sourceforge.net/u/jabe)
 * [John Filo](https://github.com/jfilo)
+* [LTX Simulation](https://www.ltx.de/english.html)
 * [Maarten Bent](https://github.com/MaartenBent)
 * [Modelica Association](https://modelica.org/association)
 * [Nelson](https://nelson-numerical-software.github.io/nelson-website/)
