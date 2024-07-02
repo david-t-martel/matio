@@ -24,19 +24,43 @@
 int
 MatioRead(const char *file_name)
 {
+    Mat_LogInit("ossfuzz");
     mat_t *matfd = Mat_Open(file_name, MAT_ACC_RDONLY);
     if ( matfd == nullptr ) {
         return 0;
     }
 
+    enum mat_acc mat_acess_mode = Mat_GetFileAccessMode(matfd);
+    const char *mat_file_name = Mat_GetFilename(matfd);
+    const char *mat_header = Mat_GetHeader(matfd);
+    enum mat_ft mat_version = Mat_GetVersion(matfd);
+
     size_t n = 0;
-    Mat_GetDir(matfd, &n);
-    Mat_Rewind(matfd);
+    char *const *dir = Mat_GetDir(matfd, &n);
 
     matvar_t *matvar = nullptr;
     while ( (matvar = Mat_VarReadNextInfo(matfd)) != nullptr ) {
         Mat_VarReadDataAll(matfd, matvar);
         Mat_VarGetSize(matvar);
+        unsigned nfields = Mat_VarGetNumberOfFields(matvar);
+        char *const *field_names = Mat_VarGetStructFieldnames(matvar);
+        Mat_VarPrint(matvar, 0);
+        Mat_VarPrint(matvar, 1);
+        matvar_t *matvar_deep_copy = Mat_VarDuplicate(matvar, 1);
+        Mat_VarFree(matvar);
+        if ( matvar_deep_copy != nullptr ) {
+            Mat_VarFree(matvar_deep_copy);
+        }
+    }
+
+    Mat_Rewind(matfd);
+    while ( (matvar = Mat_VarReadNext(matfd)) != nullptr ) {
+        Mat_VarFree(matvar);
+    }
+
+    Mat_Rewind(matfd);
+    for ( size_t i = 0; i < n; i++ ) {
+        matvar = Mat_VarRead(matfd, dir[i]);
         Mat_VarFree(matvar);
     }
 

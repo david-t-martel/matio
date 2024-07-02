@@ -5,7 +5,7 @@ if(POLICY CMP0074)
 endif()
 
 project(matio
-    VERSION 1.5.23
+    VERSION 1.5.27
     LANGUAGES C CXX
 )
 
@@ -17,7 +17,7 @@ set(matio_PACKAGE_BUGREPORT "t-beu@users.sourceforge.net")
 set(matio_PACKAGE_STRING "${PROJECT_NAME_UPPER} ${matio_VERSION}")
 set(matio_PACKAGE_TARNAME "${PROJECT_NAME}")
 set(matio_PACKAGE_URL "https://sourceforge.net/projects/matio")
-set(matio_LIB_VERSIONINFO "11:4:0")
+set(matio_LIB_VERSIONINFO "13:0:0")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -27,6 +27,7 @@ include(GNUInstallDirs)
 include(cmake/options.cmake)
 include(cmake/conan.cmake)
 include(cmake/thirdParties.cmake)
+include(cmake/staticAnalyzers.cmake)
 include(cmake/compilerOptions.cmake)
 include(cmake/getopt.cmake)
 include(cmake/src.cmake)

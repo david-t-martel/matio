@@ -3,7 +3,7 @@
  * @ingroup MAT
  */
 /*
- * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2015-2024, The matio contributors
  * Copyright (c) 2005-2014, Christopher C. Hulbert
  * All rights reserved.
  *
@@ -404,7 +404,7 @@ InflateData(mat_t *mat, z_streamp z, void *buf, unsigned int nBytes)
     if ( z->avail_in ) {
         const mat_off_t offset = -(mat_off_t)z->avail_in;
         (void)fseeko((FILE *)mat->fp, offset, SEEK_CUR);
-        bytesread -= z->avail_in;
+        /* bytesread -= z->avail_in; */
         z->avail_in = 0;
     }
 

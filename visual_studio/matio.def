@@ -18,6 +18,7 @@ EXPORTS
     Mat_Close
     Mat_Open
     Mat_GetDir
+    Mat_GetFileAccessMode
     Mat_GetFilename
     Mat_GetHeader
     Mat_GetVersion
@@ -47,7 +48,9 @@ EXPORTS
     Mat_VarReadDataLinear
     Mat_VarReadInfo
     Mat_VarReadNext
+    Mat_VarReadNextPredicate
     Mat_VarReadNextInfo
+    Mat_VarReadNextInfoPredicate
     Mat_VarSetCell
     Mat_VarSetStructFieldByIndex
     Mat_VarSetStructFieldByName

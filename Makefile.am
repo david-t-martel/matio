@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (c) 2015-2022, The matio contributors
+## Copyright (c) 2015-2024, The matio contributors
 ## Copyright (c) 2005-2014, Christopher C. Hulbert
 ## All rights reserved.
 ##
@@ -52,13 +52,15 @@ CMAKE_FILES = CMakeLists.txt \
               cmake/getopt.cmake \
               cmake/options.cmake \
               cmake/src.cmake \
+              cmake/staticAnalyzers.cmake \
               cmake/test.cmake \
               cmake/thirdParties.cmake \
               cmake/tools.cmake \
               cmake/matio_pubconf.cmake.in \
               cmake/matioConfig.cmake.in
 
-EXTRA_DIST = matio.pc.in autogen.sh patches/inflate.patch \
+EXTRA_DIST = matio.pc.in \
+             autogen.sh \
              share/test_file.mat \
              share/test_file_v6.mat \
              share/test_file_hdf5.mat \
@@ -70,10 +72,10 @@ pkgconfig_DATA = matio.pc
 $(pkgconfig_DATA): config.status
 
 if NEED_GETOPT
-GETOPT=getopt
+    GETOPT = getopt
 endif
 
-SUBDIRS = src $(GETOPT) tools test documentation
+SUBDIRS = snprintf src $(GETOPT) tools test documentation
 
 dosubst = sed -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
               -e 's,[@]VERSION[@],$(VERSION),g' \

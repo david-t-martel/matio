@@ -33,7 +33,7 @@
 # but it is only necessary on the end-user side. It is not necessary to create conan
 # packages, in fact it shouldn't be use for that. Check the project documentation.
 
-# version: 0.18.0
+# version: 0.18.1
 
 include(CMakeParseArguments)
 
@@ -55,7 +55,7 @@ function(_get_msvc_ide_version result)
         set(${result} 15 PARENT_SCOPE)
     elseif(NOT MSVC_VERSION VERSION_LESS 1920 AND MSVC_VERSION VERSION_LESS 1930)
         set(${result} 16 PARENT_SCOPE)
-    elseif(NOT MSVC_VERSION VERSION_LESS 1930 AND MSVC_VERSION VERSION_LESS 1940)
+    elseif(NOT MSVC_VERSION VERSION_LESS 1930 AND MSVC_VERSION VERSION_LESS 1950)
         set(${result} 17 PARENT_SCOPE)
     else()
         message(FATAL_ERROR "Conan: Unknown MSVC compiler version [${MSVC_VERSION}]")

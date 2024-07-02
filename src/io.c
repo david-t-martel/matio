@@ -2,7 +2,7 @@
  * MAT File I/O Utility Functions
  */
 /*
- * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2015-2024, The matio contributors
  * Copyright (c) 2005-2014, Christopher C. Hulbert
  * All rights reserved.
  *
@@ -29,7 +29,7 @@
  */
 
 #include "matio_private.h"
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define NOGDI
 #include <Windows.h>
@@ -45,7 +45,7 @@
 #define va_copy(d, s) memcpy(&(d), &(s), sizeof(va_list))
 #endif
 
-static void (*logfunc)(int log_level, char *message) = NULL;
+static void (*logfunc)(int log_level, const char *message) = NULL;
 static const char *progname = NULL;
 static char *strdup_vprintf(const char *format, va_list ap) MATIO_FORMATATTR_VPRINTF;
 
@@ -75,7 +75,7 @@ strdup_vprintf(const char *format, va_list ap)
     return buffer;
 }
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 /** @brief Convert from narrow UTF-8 string to wide string
  *
  * @ingroup mat_util
@@ -122,7 +122,7 @@ utf82u(const char *src)
  * @param message logging message
  */
 static void
-mat_logfunc(int log_level, char *message)
+mat_logfunc(int log_level, const char *message)
 {
     if ( progname ) {
         if ( log_level & MATIO_LOG_LEVEL_CRITICAL ) {
@@ -463,7 +463,7 @@ Mat_LogInit(const char *prog_name)
  * @return 0 on success
  */
 int
-Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, char *message))
+Mat_LogInitFunc(const char *prog_name, void (*log_func)(int log_level, const char *message))
 {
     logfunc = log_func;
     progname = prog_name;

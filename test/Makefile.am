@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (c) 2015-2022, The matio contributors
+## Copyright (c) 2015-2024, The matio contributors
 ## Copyright (c) 2005-2014, Christopher C. Hulbert
 ## All rights reserved.
 ##
@@ -89,6 +89,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(datasets_dir)/matio_test_cases_v4_le.mat \
                  $(datasets_dir)/packed_field_name_compressed_le.mat \
                  $(datasets_dir)/packed_field_name_uncompressed_le.mat \
+                 $(datasets_dir)/struct_nullpad_class_name_hdf_le.mat \
                  $(datasets_dir)/small_v4_be.mat \
                  $(datasets_dir)/small_v4_le.mat \
                  $(matlab_dir)/test_write_2d_logical.m \
@@ -106,6 +107,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(matlab_dir)/test_write_empty_struct.m \
                  $(matlab_dir)/test_write_sparse.m \
                  $(matlab_dir)/test_write_sparse_complex.m \
+                 $(matlab_dir)/test_write_allzero_sparse.m \
                  $(matlab_dir)/test_write_struct_2d_logical.m \
                  $(matlab_dir)/test_write_struct_2d_numeric.m \
                  $(matlab_dir)/test_write_struct_char.m \
@@ -196,6 +198,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/getstructfield-large_struct_compressed.out \
                  $(results_dir)/ind2sub.out \
                  $(results_dir)/read-packed_field_name.out \
+                 $(results_dir)/read-nullpad_class_name.out \
                  $(results_dir)/readslab-var1.out \
                  $(results_dir)/readslab-var11.out \
                  $(results_dir)/readslab-var28.out \
@@ -318,6 +321,7 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/readvar-write_sparse-sparse_matrix-uint16.out \
                  $(results_dir)/readvar-write_sparse-sparse_matrix-uint32.out \
                  $(results_dir)/readvar-write_sparse-sparse_matrix-uint64.out \
+                 $(results_dir)/readvar-write_allzero_sparse-sparse_matrix-double.out \
                  $(results_dir)/readvar-writeinf-d.out \
                  $(results_dir)/readvar-writeinf-d-win.out \
                  $(results_dir)/readvar-writenan-d.out \
@@ -403,27 +407,27 @@ TEST_DATAFILES = $(datasets_dir)/large_struct_compressed_le.mat \
                  $(results_dir)/write_struct_complex_2d_numeric-uint32.out \
                  $(results_dir)/write_struct_complex_2d_numeric-uint64.out
 if MAT73
-MAT73 = 1
+    MAT73 = 1
 else
-MAT73 = 0
+    MAT73 = 0
 endif
 
 if HAVE_ZLIB
-COMPRESSION_ZLIB = 1
+    COMPRESSION_ZLIB = 1
 else
-COMPRESSION_ZLIB = 0
+    COMPRESSION_ZLIB = 0
 endif
 
 if EXTENDED_SPARSE
-EXTENDED_SPARSE = 1
+    EXTENDED_SPARSE = 1
 else
-EXTENDED_SPARSE = 0
+    EXTENDED_SPARSE = 0
 endif
 
 if IS_WIN32
-IS_WIN32 = 1
+    IS_WIN32 = 1
 else
-IS_WIN32 = 0
+    IS_WIN32 = 0
 endif
 
 CHECK_ENVIRONMENT = GREP=$(GREP) MAT73=$(MAT73) MATLABEXE=$(MATLABEXE) \
@@ -437,9 +441,11 @@ EXTRA_DIST = $(TESTSUITE_AT) $(TESTSUITE) $(srcdir)/package.m4 \
              $(TEST_DATAFILES)
 
 if NEED_GETOPT
-GETOPT_CFLAGS = -I$(top_builddir)/getopt
-GETOPT_LIBS   = $(top_builddir)/getopt/libgetopt.la
+    GETOPT_CFLAGS = -I$(top_builddir)/getopt
+    GETOPT_LIBS   = $(top_builddir)/getopt/libgetopt.la
 endif
+
+SNPRINTF_LIBS = $(top_builddir)/snprintf/libsnprintf.la
 
 AM_CFLAGS   = -I$(top_srcdir)/src $(GETOPT_CFLAGS) $(HDF5_CFLAGS) $(ZLIB_CFLAGS)
 AM_LDFLAGS  = $(FCLDFLAGS)
@@ -453,6 +459,8 @@ test_mat_LDADD   = $(TEST_LIBS)
 test_mat_LDFLAGS = $(TEST_LFLAGS)
 
 test_snprintf_SOURCES = test_snprintf.c
+test_snprintf_LDADD   = $(SNPRINTF_LIBS)
+test_snprintf_LDFLAGS = -L$(top_builddir)/snprintf
 
 atconfig: $(top_builddir)/config.status
 	cd $(top_builddir) && ./config.status tests/$@

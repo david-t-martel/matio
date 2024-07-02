@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2015-2024, The matio contributors
  * Copyright (c) 2008-2014, Christopher C. Hulbert
  * All rights reserved.
  *
@@ -41,18 +41,19 @@
 #endif
 
 #if defined(__BORLANDC__) || defined(__MINGW32__) || defined(_MSC_VER)
-#define mat_off_t __int64
 #if defined(_MSC_VER) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
+#define mat_off_t __int64
 #define fseeko _fseeki64
 #define ftello _ftelli64
 #elif defined(__BORLANDC__) && defined(HAVE__FSEEKI64) && defined(HAVE__FTELLI64)
 #define MATIO_LFS
+#define mat_off_t __int64
 #define fseeko _fseeki64
 #define ftello _ftelli64
-#elif !defined(HAVE_FSEEKO) && !defined(HAVE_FTELLO) && defined(HAVE_FSEEKO64) && \
-    defined(HAVE_FTELLO64)
+#elif defined(HAVE_FSEEKO64) && defined(HAVE_FTELLO64)
 #define MATIO_LFS
+#define mat_off_t __int64
 #define fseeko fseeko64
 #define ftello ftello64
 #endif
@@ -94,6 +95,27 @@
 #define CAT_(X, Y) X##Y
 #define CAT(X, Y) CAT_(X, Y)
 
+#if defined(__GLIBC__)
+#if ( __BYTE_ORDER == __BIG_ENDIAN )
+#define MATIO_BE
+#elif (__BYTE_ORDER == __LITTLE_ENDIAN)
+#define MATIO_LE
+#endif
+#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)
+#define MATIO_BE
+#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN)
+#define MATIO_LE
+#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || \
+    defined(__ppc__) || defined(__hpux) || defined(_MIPSEB) || defined(_POWER) ||          \
+    defined(__s390__)
+#define MATIO_BE
+#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) ||   \
+    defined(_M_IX86) || defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) ||       \
+    defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || \
+    defined(_M_X64) || defined(__bfin__) || defined(__loongarch64) || defined(__aarch64__)
+#define MATIO_LE
+#endif
+
 /** @if mat_devman
  * @brief Matlab MAT File information
  *
@@ -127,7 +149,6 @@ struct _mat_t
 struct matvar_internal
 {
 #if defined(MAT73) && MAT73
-    char *hdf5_name;     /**< Name */
     hobj_ref_t hdf5_ref; /**< Reference */
     hid_t id;            /**< Id */
 #endif
@@ -202,11 +223,11 @@ EXTERN size_t ReadCharData(mat_t *mat, void *_data, enum matio_types data_type, 
 EXTERN int ReadDataSlab1(mat_t *mat, void *data, enum matio_classes class_type,
                          enum matio_types data_type, int start, int stride, int edge);
 EXTERN int ReadDataSlab2(mat_t *mat, void *data, enum matio_classes class_type,
-                         enum matio_types data_type, size_t *dims, int *start, int *stride,
-                         int *edge);
+                         enum matio_types data_type, const size_t *dims, const int *start,
+                         const int *stride, const int *edge);
 EXTERN int ReadDataSlabN(mat_t *mat, void *data, enum matio_classes class_type,
-                         enum matio_types data_type, int rank, size_t *dims, int *start,
-                         int *stride, int *edge);
+                         enum matio_types data_type, int rank, const size_t *dims, const int *start,
+                         const int *stride, const int *edge);
 #if HAVE_ZLIB
 EXTERN int ReadCompressedDoubleData(mat_t *mat, z_streamp z, double *data,
                                     enum matio_types data_type, int len);
@@ -239,10 +260,12 @@ EXTERN int ReadCompressedDataSlab1(mat_t *mat, z_streamp z, void *data,
                                    int start, int stride, int edge);
 EXTERN int ReadCompressedDataSlab2(mat_t *mat, z_streamp z, void *data,
                                    enum matio_classes class_type, enum matio_types data_type,
-                                   size_t *dims, int *start, int *stride, int *edge);
+                                   const size_t *dims, const int *start, const int *stride,
+                                   const int *edge);
 EXTERN int ReadCompressedDataSlabN(mat_t *mat, z_streamp z, void *data,
                                    enum matio_classes class_type, enum matio_types data_type,
-                                   int rank, size_t *dims, int *start, int *stride, int *edge);
+                                   int rank, const size_t *dims, const int *start,
+                                   const int *stride, const int *edge);
 
 /* inflate.c */
 EXTERN int InflateSkip(mat_t *mat, z_streamp z, int nBytes, size_t *bytesread);
@@ -262,9 +285,10 @@ EXTERN int Mul(size_t *res, size_t a, size_t b);
 EXTERN int Mat_MulDims(const matvar_t *matvar, size_t *nelems);
 EXTERN int Read(void *buf, size_t size, size_t count, FILE *fp, size_t *bytesread);
 EXTERN int IsEndOfFile(FILE *fp, mat_off_t *fpos);
+EXTERN int CheckSeekFile(FILE *fp, mat_off_t offset);
 
 /* io.c */
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 EXTERN wchar_t *utf82u(const char *src);
 #endif
 

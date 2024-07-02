@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2015-2024, The matio contributors
  * Copyright (c) 2012-2014, Christopher C. Hulbert
  * All rights reserved.
  *
@@ -39,7 +39,7 @@
  * @return Pointer to the Cell Array Field on success, NULL on error
  */
 matvar_t *
-Mat_VarGetCell(matvar_t *matvar, int index)
+Mat_VarGetCell(const matvar_t *matvar, int index)
 {
     size_t nelems = 1;
     matvar_t *cell = NULL;
@@ -78,7 +78,7 @@ Mat_VarGetCell(matvar_t *matvar, int index)
  * @returns an array of pointers to the cells
  */
 matvar_t **
-Mat_VarGetCells(matvar_t *matvar, int *start, int *stride, int *edge)
+Mat_VarGetCells(const matvar_t *matvar, const int *start, const int *stride, const int *edge)
 {
     int i, j, N, I;
     size_t idx[10] =
@@ -150,7 +150,7 @@ Mat_VarGetCells(matvar_t *matvar, int *start, int *stride, int *edge)
  * @returns an array of pointers to the cells
  */
 matvar_t **
-Mat_VarGetCellsLinear(matvar_t *matvar, int start, int stride, int edge)
+Mat_VarGetCellsLinear(const matvar_t *matvar, int start, int stride, int edge)
 {
     matvar_t **cells = NULL;
 

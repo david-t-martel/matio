@@ -1,3 +1,50 @@
+Changes in 1.5.27 (20 April 2024)
+* Fixed const-correctness of input arguments of API functions
+* Fixed const-correctness of return type of Mat_GetDir
+* Fixed bug duplicating function class (with deep copy) in Mat_VarDuplicate
+* Fixed little endian detection for __aarch64__
+* Fixed LFS support on MinGW 64-bit builds
+* Fixed support of Unicode filenames on Windows
+* Fixed detection of HDF5 version for UTF-8 based file name of HDF5 MAT file
+* Fixed stack-based buffer overflow when reading (crafted) HDF5 MAT file
+* Fixed build on Solaris
+* Fixed build with Rust bindings and LLVM >= 16
+* CMake: Fixed MinGW linker error with libc (regression of v1.5.24)
+* CMake: Enabled static analysis with Cppcheck
+
+Changes in 1.5.26 (12 November 2023)
+* Fixed testsuite (regression of v1.5.25)
+
+Changes in 1.5.25 (10 November 2023)
+* Fixed reading struct array with null padded class name from HDF5 MAT file
+* Fixed memory leak in Mat_VarFree for function class
+* CMake: Silence MSVC compiler warnings
+
+Changes in 1.5.24 (28 October 2023)
+* Added predicated iteration API functions Mat_VarReadNextInfoPredicate and
+  Mat_VarReadNextPredicate to speed-up reading variables from HDF5 MAT file
+* Added new API function Mat_GetFileAccessMode to retrieve the file access mode
+  of a MAT file
+* Changed: Mat_VarDelete returns error if MAT file is opened in read-only mode
+* Changed: Reduced memory foot-print of matvar_t.internal
+* Fixed read performance of cell/struct array from HDF5 MAT file
+* Fixed reference counting of HDF5 MAT file in Mat_VarDuplicate
+* Fixed file access mode of created v4 MAT file
+* Fixed read performance of Mat_GetDir for HDF5 MAT file
+* Fixed bug reading struct array from v5 MAT file
+* Fixed bug adding field to struct array of v5 MAT file
+* Fixed heap-based buffer overflow when reading HDF5 MAT file
+* Confirmed compatibility with HDF5 v1.14.x
+* autoconf: Enabled system extensions
+* autoconf: Fixed getopt_long check
+* autoconf: Fixed pkg-config file for static linking
+* CMake: Updated cmake-conan to version 0.18.1
+* CMake: Fixed version comparison
+* CMake: Fixed properties for CMake < 3.11
+* CMake: Fixed linker error on OpenBSD
+* CMake: Fixed checks of linker options
+* Several other fixes, for example for memory leaks
+
 Changes in 1.5.23 (31 March 2022)
 * Updated cmake-conan to version 0.18.0
 * Fixed testsuite (regression of v1.5.22)
@@ -15,7 +62,7 @@ Changes in 1.5.22 (25 March 2022)
 Changes in 1.5.21 (25 March 2021)
 * Fixed: Avoid usage of strlen when creating MAT_T_UTF8 encoded character array
   (regression of v1.5.20)
-* Fixed reading of compression flag from HDF5 MAT file 
+* Fixed reading of compression flag from HDF5 MAT file
 
 Changes in 1.5.20 (21 March 2021)
 * Added support for writing MAT_T_UTF8 encoded character array to HDF5 MAT file

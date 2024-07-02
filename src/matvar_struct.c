@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, The matio contributors
+ * Copyright (c) 2015-2024, The matio contributors
  * Copyright (c) 2012-2014, Christopher C. Hulbert
  * All rights reserved.
  *
@@ -43,7 +43,8 @@
  * @return Pointer to the new structure MATLAB variable on success, NULL on error
  */
 matvar_t *
-Mat_VarCreateStruct(const char *name, int rank, size_t *dims, const char **fields, unsigned nfields)
+Mat_VarCreateStruct(const char *name, int rank, const size_t *dims, const char **fields,
+                    unsigned nfields)
 {
     size_t nelems = 1;
     int j;
@@ -130,12 +131,12 @@ Mat_VarAddStructField(matvar_t *matvar, const char *fieldname)
     if ( err )
         return -1;
 
-    matvar->internal->num_fields++;
-    nfields = matvar->internal->num_fields;
+    nfields = matvar->internal->num_fields + 1;
     fieldnames = (char **)realloc(matvar->internal->fieldnames,
                                   nfields * sizeof(*matvar->internal->fieldnames));
     if ( NULL == fieldnames )
         return -1;
+    matvar->internal->num_fields = nfields;
     matvar->internal->fieldnames = fieldnames;
     matvar->internal->fieldnames[nfields - 1] = strdup(fieldname);
 
@@ -176,7 +177,7 @@ Mat_VarAddStructField(matvar_t *matvar, const char *fieldname)
  * @returns Number of fields
  */
 unsigned
-Mat_VarGetNumberOfFields(matvar_t *matvar)
+Mat_VarGetNumberOfFields(const matvar_t *matvar)
 {
     int nfields;
     if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT || NULL == matvar->internal ) {
@@ -215,13 +216,14 @@ Mat_VarGetStructFieldnames(const matvar_t *matvar)
  * @return Pointer to the structure field on success, NULL on error
  */
 matvar_t *
-Mat_VarGetStructFieldByIndex(matvar_t *matvar, size_t field_index, size_t index)
+Mat_VarGetStructFieldByIndex(const matvar_t *matvar, size_t field_index, size_t index)
 {
     int err;
     matvar_t *field = NULL;
     size_t nelems = 1, nfields;
 
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT || matvar->data_size == 0 )
+    if ( matvar == NULL || matvar->data == NULL || matvar->class_type != MAT_C_STRUCT ||
+         matvar->data_size == 0 )
         return NULL;
 
     err = Mat_MulDims(matvar, &nelems);
@@ -253,13 +255,14 @@ Mat_VarGetStructFieldByIndex(matvar_t *matvar, size_t field_index, size_t index)
  * @return Pointer to the structure field on success, NULL on error
  */
 matvar_t *
-Mat_VarGetStructFieldByName(matvar_t *matvar, const char *field_name, size_t index)
+Mat_VarGetStructFieldByName(const matvar_t *matvar, const char *field_name, size_t index)
 {
     int i, nfields, field_index, err;
     matvar_t *field = NULL;
     size_t nelems = 1;
 
-    if ( matvar == NULL || matvar->class_type != MAT_C_STRUCT || matvar->data_size == 0 )
+    if ( matvar == NULL || matvar->data == NULL || matvar->class_type != MAT_C_STRUCT ||
+         matvar->data_size == 0 )
         return NULL;
 
     err = Mat_MulDims(matvar, &nelems);
@@ -298,7 +301,7 @@ Mat_VarGetStructFieldByName(matvar_t *matvar, const char *field_name, size_t ind
  * @return Pointer to the Structure Field on success, NULL on error
  */
 matvar_t *
-Mat_VarGetStructField(matvar_t *matvar, void *name_or_index, int opt, int index)
+Mat_VarGetStructField(const matvar_t *matvar, void *name_or_index, int opt, int index)
 {
     int err, nfields;
     matvar_t *field = NULL;
@@ -345,7 +348,8 @@ Mat_VarGetStructField(matvar_t *matvar, void *name_or_index, int opt, int index)
  * @returns A new structure array with fields indexed from @c matvar.
  */
 matvar_t *
-Mat_VarGetStructs(matvar_t *matvar, int *start, int *stride, int *edge, int copy_fields)
+Mat_VarGetStructs(const matvar_t *matvar, const int *start, const int *stride, const int *edge,
+                  int copy_fields)
 {
     size_t i, N, I, nfields, field,
         idx[10] =
@@ -446,7 +450,7 @@ Mat_VarGetStructs(matvar_t *matvar, int *start, int *stride, int *edge, int copy
  * @returns A new structure with fields indexed from matvar
  */
 matvar_t *
-Mat_VarGetStructsLinear(matvar_t *matvar, int start, int stride, int edge, int copy_fields)
+Mat_VarGetStructsLinear(const matvar_t *matvar, int start, int stride, int edge, int copy_fields)
 {
     matvar_t *struct_slab;
 

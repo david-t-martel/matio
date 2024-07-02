@@ -93,7 +93,7 @@ Table of Contents
                 '--with-default-api-version=v112'), or with deprecated API
                 version 1.10 (i.e. '--with-default-api-version=v110') or with
                 deprecated API version 1.8 (i.e. '--with-default-api-version=v18').
-              * Building matio with HDF5 1.13.x requires configuration of HDF5
+              * Building matio with HDF5 1.14.x requires configuration of HDF5
                 with either default API version 1.14 (i.e.
                 '--with-default-api-version=v114'), or with deprecated API
                 version 1.12 (i.e. '--with-default-api-version=v112'), or with
@@ -101,9 +101,9 @@ Table of Contents
                 or with deprecated API version 1.8 (i.e.
                 '--with-default-api-version=v18').
 
-
             For Windows, the pre-compiled binaries can be used which also
             include a DLL of zlib to satisfy the zlib dependency.
+            For Ubuntu, 'sudo apt install libhdf5-dev' should work fine.
 
     2.2 Building matio
         2.2.1 Quick Build Guide
@@ -175,7 +175,7 @@ Table of Contents
 
               * 'MATIO_USE_CONAN:BOOL=OFF'
                 This option enables the Conan package manager to resolve the
-                library dependencies.
+                library dependencies. Only Conan 1.x is supported.
               * 'MATIO_DEFAULT_FILE_VERSION:STRING=5'
                 This option sets the default MAT file version (4,5,7.3) that
                 will be used when writing.
@@ -197,6 +197,9 @@ Table of Contents
               * 'MATIO_WITH_ZLIB:BOOL=ON'
                 This option enables CMake to check for availability of the
                 zlib library (see section 2.1.1 for information about zlib).
+              * 'MATIO_ENABLE_CPPCHECK:BOOL=OFF'
+                This option enables CMake >= 3.10 to perform static analysis
+                with Cppcheck.
 
             To help CMake find the HDF5 libraries, set environment variable
             HDF5_DIR to the 'cmake/hdf5' directory (containing 'hdf5-config.cmake')

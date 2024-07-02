@@ -4,22 +4,22 @@ branches:
   except:
   - coverity_scan
 
-version: 1.5.23+build.{build}
+version: 1.5.27+build.{build}
 
 cache:
   - C:\cygwin-setup-cache
   - C:\cygwin64-setup-cache
 
 platform:
-  - Win32
   - x64
+  - Win32
 
 environment:
   matrix:
-    - compiler: Cygwin
+    - compiler: MinGW
       configuration: Release
       build_with: autoconf
-    - compiler: MinGW
+    - compiler: Cygwin
       configuration: Release
       build_with: autoconf
     - compiler: MSVC
@@ -40,10 +40,12 @@ matrix:
       build_with: cmake
     - compiler: Cygwin
       configuration: Release Lib
-    - compiler: MinGW
-      platform: x64
+    - compiler: Cygwin
+      platform: Win32
     - compiler: MinGW
       build_with: msbuild
+    - compiler: MinGW
+      platform: x64
     - compiler: MinGW
       build_with: cmake
     - compiler: MinGW
@@ -121,6 +123,7 @@ for:
     - if "%platform%"=="x64" C:\cygwin-setup-x86_x64.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root C:\cygwin64 --local-package-dir C:\cygwin64-setup-cache --packages libhdf5-devel,zlib-devel
 
   before_build:
+    - git config --global --add safe.directory '*'
     - git submodule update --init
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null" autogen.sh
     - sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./configure < /dev/null" configure
@@ -141,21 +144,12 @@ for:
       - compiler: MinGW
 
   install:
-    - ps: Invoke-WebRequest http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz -OutFile C:\msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
-    - ps: Invoke-WebRequest http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig -OutFile C:\msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig
     # Win32
     - if "%platform%"=="Win32" set PATH=C:\MinGW\bin;C:\MinGW\msys\1.0\bin;%PATH%
     - if "%platform%"=="Win32" mingw-get update
     - if "%platform%"=="Win32" mingw-get install libminizip
     # x64
     - if "%platform%"=="x64" set PATH=C:\msys64\usr\bin;C:\msys64\mingw64\bin;%PATH%
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman-key --verify C:/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U C:/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/msys/x86_64/libzstd-1.4.5-2-x86_64.pkg.tar.xz"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/msys/x86_64/zstd-1.4.5-2-x86_64.pkg.tar.xz"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/msys/x86_64/pacman-5.2.2-1-x86_64.pkg.tar.xz"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --needed --noconfirm -Sy pacman-mirrors"
-    - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S automake"
     - if "%platform%"=="x64" C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zlib-devel"
 

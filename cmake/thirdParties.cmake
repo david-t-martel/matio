@@ -12,10 +12,24 @@ if(MATIO_WITH_HDF5)
     endif()
 
     if(MATIO_USE_CONAN)
+        set(MATIO_CONAN_REQUIRES "hdf5/[>=1.8 <1.15]" "zlib/[>=1.2.3]")
+        if(MATIO_ENABLE_CPPCHECK)
+            list(APPEND MATIO_CONAN_REQUIRES "cppcheck/[>=2.14.1]")
+        endif()
         if(HDF5_USE_STATIC_LIBRARIES)
-            conan_cmake_run(REQUIRES "hdf5/[>=1.8 <1.13]" "zlib/[>=1.2.3]" BASIC_SETUP CMAKE_TARGETS OPTIONS hdf5:shared=False zlib:shared=False BUILD missing)
+            conan_cmake_run(
+                REQUIRES ${MATIO_CONAN_REQUIRES}
+                BASIC_SETUP CMAKE_TARGETS
+                OPTIONS hdf5:shared=False zlib:shared=False
+                BUILD missing
+            )
         else()
-            conan_cmake_run(REQUIRES "hdf5/[>=1.8 <1.13]" "zlib/[>=1.2.3]" BASIC_SETUP CMAKE_TARGETS OPTIONS hdf5:shared=True zlib:shared=True BUILD missing)
+            conan_cmake_run(
+                REQUIRES ${MATIO_CONAN_REQUIRES}
+                BASIC_SETUP CMAKE_TARGETS
+                OPTIONS hdf5:shared=True zlib:shared=True
+                BUILD missing
+            )
         endif()
         set(HDF5_FOUND TRUE)
     else()
@@ -23,7 +37,10 @@ if(MATIO_WITH_HDF5)
         if(HDF5_FOUND)
             set(HDF_MIN_VER 1.8)
             if(HDF5_VERSION VERSION_LESS ${HDF_MIN_VER})
-                message(FATAL_ERROR "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})")
+                message(FATAL_ERROR
+                    "Could NOT find HDF5: Found unsuitable version ${HDF5_VERSION}, "
+                    "but required is at least ${HDF_MIN_VER} (found ${HDF5_LIBRARIES})."
+                )
             endif()
         endif()
     endif()
@@ -65,8 +82,8 @@ if(NOT HAVE_HDF5 AND MATIO_MAT73)
     message(FATAL_ERROR "MAT73 requires HDF5")
 endif()
 
-
-macro(matio_create_zlib target)
+# Create the zlib target
+macro(MATIO_CREATE_ZLIB target)
     add_library(MATIO::ZLIB INTERFACE IMPORTED)
     set_target_properties(MATIO::ZLIB PROPERTIES INTERFACE_LINK_LIBRARIES ${target})
     set(ZLIB_FOUND TRUE)
@@ -78,23 +95,23 @@ if(MATIO_WITH_ZLIB)
     endif()
 
     if(MATIO_USE_CONAN AND TARGET CONAN_PKG::zlib)
-        matio_create_zlib(CONAN_PKG::zlib)
+        MATIO_CREATE_ZLIB(CONAN_PKG::zlib)
     elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-static)
-        matio_create_zlib(zlib-static)
+        MATIO_CREATE_ZLIB(zlib-static)
     elseif(HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::zlib-static)
-        matio_create_zlib(hdf5::zlib-static)
+        MATIO_CREATE_ZLIB(hdf5::zlib-static)
     elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET zlib-shared)
-        matio_create_zlib(zlib-shared)
+        MATIO_CREATE_ZLIB(zlib-shared)
     elseif(NOT HDF5_USE_STATIC_LIBRARIES AND TARGET hdf5::zlib-shared)
-        matio_create_zlib(hdf5::zlib-shared)
+        MATIO_CREATE_ZLIB(hdf5::zlib-shared)
     elseif(TARGET zlib)
-        matio_create_zlib(zlib)
+        MATIO_CREATE_ZLIB(zlib)
     elseif(TARGET ZLIB::ZLIB)
-        matio_create_zlib(ZLIB::ZLIB)
+        MATIO_CREATE_ZLIB(ZLIB::ZLIB)
     else()
         find_package(ZLIB 1.2.3)
         if(ZLIB_FOUND)
-            matio_create_zlib(ZLIB::ZLIB)
+            MATIO_CREATE_ZLIB(ZLIB::ZLIB)
         endif()
     endif()
 

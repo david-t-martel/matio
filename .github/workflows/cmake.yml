@@ -1,0 +1,196 @@
+name: "CMake build"
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.toolchain }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - linux-gcc
+          - macos-clang
+          - windows-msvc
+          - windows-mingw
+        configuration:
+          - Release
+        python-version:
+          - 3.11
+        include:
+          - toolchain: linux-gcc
+            os: ubuntu-latest
+            compiler: gcc
+          - toolchain: macos-clang
+            os: macos-latest
+            compiler: clang
+          - toolchain: windows-msvc
+            os: windows-latest
+            compiler: msvc
+          - toolchain: windows-mingw
+            os: windows-latest
+            compiler: mingw
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: Setup python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install python packages
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
+          fi
+          pip install --disable-pip-version-check --user "conan>=1.62.0,<2"
+      - name: Configure (${{ matrix.configuration }})
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "/Users/runner/Library/Python/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
+          fi
+          if [ "${{ matrix.compiler }}" == "msvc" ]; then
+            cmake -S . -B build -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+          elif [ "${{ matrix.compiler }}" == "mingw" ]; then
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON -G "MinGW Makefiles"
+          elif [ "${{ matrix.compiler }}" == "gcc" ]; then
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF -DMATIO_ENABLE_CPPCHECK=ON
+          else
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DMATIO_USE_CONAN=ON -DMATIO_SHARED=OFF
+          fi
+      - name: Build with ${{ matrix.compiler }}
+        run: |
+          if [ "${{ matrix.compiler }}" == "msvc" ]; then
+            cmake --build build --config ${{ matrix.configuration }}
+          else
+            cmake --build build -- -j8
+          fi
+      - name: Test
+        run: |
+          if [ "${{ matrix.compiler }}" == "msvc" ]; then
+            MATDUMP="./build/Release/matdump.exe"
+          else
+            MATDUMP="./build/bin/matdump"
+          fi
+          for file in ./share/*.mat; do
+            "$MATDUMP" -d "$file" d
+            "$MATDUMP" -v "$file"
+            "$MATDUMP" -v -f whos "$file"
+          done
+          "$MATDUMP" -v -H
+          "$MATDUMP" -V
+
+  build-openbsd:
+    name: openbsd-clang
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: Test with clang
+        uses: vmactions/openbsd-vm@v1
+        with:
+          usesh: true
+          copyback: false
+          prepare: |
+            set -e
+            pkg_add cmake
+          run: |
+            set -e
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake --build build -- -j8
+            ./build/test_snprintf
+            ./build/test_mat -H
+            ./build/test_mat -L
+            ./build/test_mat -V
+            ./build/matdump -v -H
+            ./build/matdump -V
+            ./build/matdump -d ./share/test_file.mat structure
+            ./build/matdump -v ./share/test_file.mat
+            ./build/matdump -v -f whos ./share/test_file.mat
+
+  build-solaris:
+    name: solaris-gcc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: Test with gcc
+        uses: vmactions/solaris-vm@v1
+        with:
+          release: 11.4
+          usesh: true
+          copyback: false
+          prepare: |
+            set -e
+            pkg install cmake gcc
+          run: |
+            set -e
+            mkdir build
+            cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release -DMATIO_SHARED=OFF -DMATIO_MAT73=OFF
+            cmake --build build -- -j8
+            ./build/test_snprintf
+            ./build/test_mat -H
+            ./build/test_mat -L
+            ./build/test_mat -V
+            ./build/matdump -v -H
+            ./build/matdump -V
+            ./build/matdump -d ./share/test_file.mat structure
+            ./build/matdump -v ./share/test_file.mat
+            ./build/matdump -v -f whos ./share/test_file.mat
+
+  build-cygwin:
+    name: windows-cygwin
+    runs-on: windows-latest
+    steps:
+      - name: Set git to use LF
+        run: git config --global core.autocrlf input
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: Setup cygwin
+        uses: cygwin/cygwin-install-action@master
+        with:
+          packages: >-
+            cmake
+            gcc-core
+            gcc-g++
+            libhdf5-devel
+            make
+            ninja
+            zlib-devel
+      - name: Configure
+        run: |
+          export PATH=/usr/bin:$PATH
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+        env:
+          CYGWIN_NOWINPATH: 1
+      - name: Build with gcc
+        run: |
+          export PATH=/usr/bin:$PATH
+          cmake --build build -- -j8
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+      - name: Test
+        run: |
+          for file in ./share/*.mat; do
+            ./build/matdump -d "$file" d
+            ./build/matdump -v "$file"
+            ./build/matdump -v -f whos "$file"
+          done
+          ./build/matdump -v -H
+          ./build/matdump -V
+        shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'

@@ -2,11 +2,12 @@
 MATLAB MAT file I/O library
 
 ## Status
-[![Build Status](https://app.travis-ci.com/tbeu/matio.svg?branch=master)](https://app.travis-ci.com/tbeu/matio) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![FreeBSD Build Status](https://img.shields.io/cirrus/github/tbeu/matio?label=freebsd&logo=cirrus%20ci)](https://cirrus-ci.com/github/tbeu/matio) [![Total Alerts](https://img.shields.io/lgtm/alerts/g/tbeu/matio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tbeu/matio/alerts/) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio) [![Open Hub](https://img.shields.io/badge/Open-Hub-blue.svg)](https://www.openhub.net/p/matio)
+[![pre-commit.ci Status](https://results.pre-commit.ci/badge/github/tbeu/matio/master.svg)](https://results.pre-commit.ci/latest/github/tbeu/matio/master) [![Build Status](https://app.travis-ci.com/tbeu/matio.svg?branch=master)](https://app.travis-ci.com/tbeu/matio) [![Build Status](https://github.com/tbeu/matio/actions/workflows/cmake.yml/badge.svg?branch=master)](https://github.com/tbeu/matio/actions/workflows/cmake.yml) [![Coverity Scan Build Status](https://scan.coverity.com/projects/7575/badge.svg)](https://scan.coverity.com/projects/tbeu-matio) [![Coverage Status](https://coveralls.io/repos/github/tbeu/matio/badge.svg?branch=master)](https://coveralls.io/github/tbeu/matio?branch=master) [![Build Status](https://ci.appveyor.com/api/projects/status/heqkwuqllbh573i5/branch/master?svg=true)](https://ci.appveyor.com/project/tbeu/matio/branch/master) [![FreeBSD Build Status](https://img.shields.io/cirrus/github/tbeu/matio?label=freebsd&logo=cirrus%20ci)](https://cirrus-ci.com/github/tbeu/matio) [![CodeQL](https://github.com/tbeu/matio/actions/workflows/codeql.yml/badge.svg)](https://github.com/tbeu/matio/actions/workflows/codeql.yml) [![Packaging status](https://repology.org/badge/tiny-repos/matio.svg)](https://repology.org/metapackage/matio/versions) [![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/matio.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:matio) [![Open Hub](https://img.shields.io/badge/Open-Hub-blue.svg)](https://www.openhub.net/p/matio) [![Conan Center](https://img.shields.io/conan/v/matio)](https://conan.io/center/recipes/matio) [![Vcpkg Version](https://img.shields.io/vcpkg/v/matio)](https://vcpkg.link/ports/matio)
+
 
 ## Table of Contents
 1. [Introduction](#10-introduction)
-  * 1.1[Contact](#11-contact)
+  * 1.1 [Contact](#11-contact)
   * 1.2 [Acknowledgements](#12-acknowledgements)
   * 1.3 [Contributing](#13-contributing)
   * 1.4 [Questions and Reporting Bugs](#14-questions-and-reporting-bugs)
@@ -71,9 +72,10 @@ Support for MAT file version 7.3 requires the HDF5 library. This library can be 
 * Building matio with HDF5 1.8.x requires configuration of HDF5 with default API version 1.8 (i.e. `--with-default-api-version=v18`).
 * Building matio with HDF5 1.10.x requires configuration of HDF5 with either default API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 * Building matio with HDF5 1.12.x requires configuration of HDF5 with either default API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
-* Building matio with HDF5 1.13.x requires configuration of HDF5 with either default API version 1.14 (i.e. `--with-default-api-version=v114`), or with deprecated API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
+* Building matio with HDF5 1.14.x requires configuration of HDF5 with either default API version 1.14 (i.e. `--with-default-api-version=v114`), or with deprecated API version 1.12 (i.e. `--with-default-api-version=v112`), or with deprecated API version 1.10 (i.e. `--with-default-api-version=v110`) or with deprecated API version 1.8 (i.e. `--with-default-api-version=v18`).
 
 For Windows, the pre-compiled binaries can be used which also include a DLL of zlib to satisfy the zlib dependency.
+For Ubuntu, `sudo apt install libhdf5-dev` should work fine.
 
 ### 2.2 Building matio
 #### 2.2.1 Quick Build Guide
@@ -120,7 +122,7 @@ cmake --install .
 The following matio specific options for building with CMake are available.
 
 * `MATIO_USE_CONAN:BOOL=OFF`
-This option enables the Conan package manager to resolve the library dependencies.
+This option enables the Conan package manager to resolve the library dependencies. Only Conan 1.x is supported.
 * `MATIO_DEFAULT_FILE_VERSION:STRING=5`
 This option sets the default MAT file version (4,5,7.3) that will be used when writing.
 * `MATIO_EXTENDED_SPARSE:BOOL=ON`
@@ -135,6 +137,8 @@ This option builds the matio library as shared object (i.e., a dynamic link libr
 This option enables CMake to check for availability of the HDF5 library (see section [2.1.2](#212-hdf5) for information about HDF5).
 * `MATIO_WITH_ZLIB:BOOL=ON`
 This option enables CMake to check for availability of the zlib library (see section [2.1.1](#211-zlib) for information about zlib).
+* `MATIO_ENABLE_CPPCHECK:BOOL=OFF`
+This option enables CMake &GreaterEqual; 3.10 to perform static analysis with Cppcheck.
 
 To help CMake find the HDF5 libraries, set environment variable `HDF5_DIR` to the `cmake/hdf5` directory (containing `hdf5-config.cmake`) inside the HDF5 build or installation directory, or call cmake with `-DHDF5_DIR="dir/to/hdf5/cmake/hdf5"`. Alternatively call CMake with `-DCMAKE_PREFIX_PATH="dir/to/hdf5/cmake"`. See the [HDF5 instructions](https://support.hdfgroup.org/HDF5/release/cmakebuild.html#compile) for more information. Using `hdf5-config` is recommended over using CMake's built-in `FindHDF5`, especially for static builds. CMake 3.10 or later is recommended.
 

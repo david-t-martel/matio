@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ##
-## Copyright (c) 2015-2022, The matio contributors
+## Copyright (c) 2015-2024, The matio contributors
 ## Copyright (c) 2012-2014, Christopher C. Hulbert
 ## All rights reserved.
 ##
@@ -34,6 +34,7 @@ dist_man3_MANS  = \
     Mat_Close.3 \
     Mat_CreateVer.3 \
     Mat_GetDir.3 \
+    Mat_GetFileAccessMode.3 \
     Mat_GetFilename.3 \
     Mat_GetHeader.3 \
     Mat_GetLibraryVersion.3 \
