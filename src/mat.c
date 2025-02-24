@@ -1186,43 +1186,56 @@ Mat_VarCreate(const char *name, enum matio_classes class_type, enum matio_types 
         matvar->data = (void *)data;
         matvar->mem_conserve = 1;
     } else if ( MAT_C_SPARSE == matvar->class_type ) {
-        mat_sparse_t *sparse_data;
-        const mat_sparse_t *sparse_data_in;
-
-        sparse_data_in = (const mat_sparse_t *)data;
-        sparse_data = (mat_sparse_t *)malloc(sizeof(mat_sparse_t));
+        const mat_sparse_t *sparse_data_in = (const mat_sparse_t *)data;
+        mat_sparse_t *sparse_data = (mat_sparse_t *)malloc(sizeof(mat_sparse_t));
         if ( NULL != sparse_data ) {
             sparse_data->nzmax = sparse_data_in->nzmax;
             sparse_data->nir = sparse_data_in->nir;
             sparse_data->njc = sparse_data_in->njc;
             sparse_data->ndata = sparse_data_in->ndata;
-            sparse_data->ir = (mat_uint32_t *)malloc(sparse_data->nir * sizeof(*sparse_data->ir));
-            if ( NULL != sparse_data->ir )
-                memcpy(sparse_data->ir, sparse_data_in->ir,
-                       sparse_data->nir * sizeof(*sparse_data->ir));
-            sparse_data->jc = (mat_uint32_t *)malloc(sparse_data->njc * sizeof(*sparse_data->jc));
-            if ( NULL != sparse_data->jc )
-                memcpy(sparse_data->jc, sparse_data_in->jc,
-                       sparse_data->njc * sizeof(*sparse_data->jc));
-            if ( matvar->isComplex ) {
-                sparse_data->data = malloc(sizeof(mat_complex_split_t));
-                if ( NULL != sparse_data->data ) {
-                    mat_complex_split_t *complex_data = (mat_complex_split_t *)sparse_data->data;
-                    const mat_complex_split_t *complex_data_in =
-                        (mat_complex_split_t *)sparse_data_in->data;
-                    complex_data->Re = malloc(sparse_data->ndata * data_size);
-                    complex_data->Im = malloc(sparse_data->ndata * data_size);
-                    if ( NULL != complex_data->Re )
-                        memcpy(complex_data->Re, complex_data_in->Re,
-                               sparse_data->ndata * data_size);
-                    if ( NULL != complex_data->Im )
-                        memcpy(complex_data->Im, complex_data_in->Im,
+            if ( NULL != sparse_data_in->ir ) {
+                sparse_data->ir =
+                    (mat_uint32_t *)malloc(sparse_data->nir * sizeof(*sparse_data->ir));
+                if ( NULL != sparse_data->ir )
+                    memcpy(sparse_data->ir, sparse_data_in->ir,
+                           sparse_data->nir * sizeof(*sparse_data->ir));
+            } else {
+                sparse_data->ir = NULL;
+            }
+            if ( NULL != sparse_data_in->jc ) {
+                sparse_data->jc =
+                    (mat_uint32_t *)malloc(sparse_data->njc * sizeof(*sparse_data->jc));
+                if ( NULL != sparse_data->jc )
+                    memcpy(sparse_data->jc, sparse_data_in->jc,
+                           sparse_data->njc * sizeof(*sparse_data->jc));
+            } else {
+                sparse_data->jc = NULL;
+            }
+            if ( NULL != sparse_data_in->data ) {
+                if ( matvar->isComplex ) {
+                    sparse_data->data = malloc(sizeof(mat_complex_split_t));
+                    if ( NULL != sparse_data->data ) {
+                        mat_complex_split_t *complex_data =
+                            (mat_complex_split_t *)sparse_data->data;
+                        const mat_complex_split_t *complex_data_in =
+                            (mat_complex_split_t *)sparse_data_in->data;
+                        complex_data->Re = malloc(sparse_data->ndata * data_size);
+                        complex_data->Im = malloc(sparse_data->ndata * data_size);
+                        if ( NULL != complex_data->Re )
+                            memcpy(complex_data->Re, complex_data_in->Re,
+                                   sparse_data->ndata * data_size);
+                        if ( NULL != complex_data->Im )
+                            memcpy(complex_data->Im, complex_data_in->Im,
+                                   sparse_data->ndata * data_size);
+                    }
+                } else {
+                    sparse_data->data = malloc(sparse_data->ndata * data_size);
+                    if ( NULL != sparse_data->data )
+                        memcpy(sparse_data->data, sparse_data_in->data,
                                sparse_data->ndata * data_size);
                 }
             } else {
-                sparse_data->data = malloc(sparse_data->ndata * data_size);
-                if ( NULL != sparse_data->data )
-                    memcpy(sparse_data->data, sparse_data_in->data, sparse_data->ndata * data_size);
+                sparse_data->data = NULL;
             }
         }
         matvar->data = sparse_data;
@@ -2230,12 +2243,14 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
         int err = Mul(&nelems_x_nfields, nelems, nfields);
         if ( MATIO_E_NO_ERROR == err && nelems_x_nfields > 0 ) {
             printf("Fields[%" SIZE_T_FMTSTR "] {\n", nelems_x_nfields);
-            for ( i = 0; i < nelems_x_nfields; i++ ) {
-                if ( NULL == fields[i] ) {
-                    printf("      Name: %s\n      Rank: %d\n",
-                           matvar->internal->fieldnames[i % nfields], 0);
-                } else {
-                    Mat_VarPrint(fields[i], printdata);
+            if ( NULL != matvar->internal->fieldnames && NULL != fields ) {
+                for ( i = 0; i < nelems_x_nfields; i++ ) {
+                    if ( NULL == fields[i] ) {
+                        printf("      Name: %s\n      Rank: %d\n",
+                               matvar->internal->fieldnames[i % nfields], 0);
+                    } else {
+                        Mat_VarPrint(fields[i], printdata);
+                    }
                 }
             }
             printf("}\n");
@@ -2429,7 +2444,9 @@ Mat_VarPrint(const matvar_t *matvar, int printdata)
                     const char *im = (const char *)complex_data->Im;
                     for ( i = 0; i < (size_t)sparse->njc - 1; i++ ) {
                         for ( j = sparse->jc[i];
-                              j < (size_t)sparse->jc[i + 1] && j < (size_t)sparse->ndata; j++ ) {
+                              j < (size_t)sparse->jc[i + 1] && j < (size_t)sparse->ndata &&
+                              j < (size_t)sparse->nir;
+                              j++ ) {
                             printf("    (%u,%" SIZE_T_FMTSTR ")  ", sparse->ir[j] + 1, i + 1);
                             Mat_PrintNumber(matvar->data_type, re + j * stride);
                             printf(" + ");

@@ -83,6 +83,9 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* Define to 1 if you have the <float.h> header file. */
+#define HAVE_FLOAT_H 1
+
 /* Define to 1 if the system has the type `intmax_t'. */
 #if defined(_MSC_VER) && _MSC_VER >= 1600
 #define HAVE_INTMAX_T 1
@@ -271,7 +274,7 @@
 #define PACKAGE_NAME "MATIO"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "MATIO 1.5.27"
+#define PACKAGE_STRING "MATIO 1.5.28"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "matio"
@@ -280,7 +283,7 @@
 #define PACKAGE_URL "https://sourceforge.net/projects/matio"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.5.27"
+#define PACKAGE_VERSION "1.5.28"
 
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
@@ -319,7 +322,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "1.5.27"
+#define VERSION "1.5.28"
 
 /* Z prefix */
 #undef Z_PREFIX
